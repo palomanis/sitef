@@ -1,0 +1,3 @@
+<h1> Filmes cadastrados:
+    $forall Entity pid user <- listaU
+        <p> #{filmeNome user} <br>
