@@ -29,7 +29,7 @@ formFilme = renderDivs $ Filme <$>
                             fsLabel="Sinopse",
                             fsTooltip=Nothing,
                             fsName= Nothing,
-                            fsAttrs=[("maxlength","2")]} Nothing
+                            fsAttrs=[("maxlength","800")]} Nothing
 
 
 formPessoa :: Form Pessoa
@@ -49,11 +49,12 @@ widgetForm x enctype widget y val = do
 
 getHomeR :: Handler Html
 getHomeR = defaultLayout [whamlet|
-    <h1> Bem Vindo ao site Em cena
-        <h2> Seu site de informações sobre cinema
-        <h3> Faça seu cadastro <a href=cadastro>aqui</a>
-                                  <h3> Se ja possui um, faça seu login <a href=login>aqui</a>
-                                    <img src=@{StaticR cinema_jpg}>
+<body bgcolor="black">
+      <img src=@{StaticR cinemaa_jpg} align="right">
+     <h1 align="center"> <FONT color="white"> Bem Vindo ao site Em cena</h1>
+         <h2 align="center"> <FONT color="white"> Seu site de informações sobre cinema</h2>
+                                   <h3> <FONT color="blue"> Faça seu cadastro <a href=cadastro>aqui</a></h3>
+                                                                                 <h3> <FONT color="blue"> Se ja possui um, faça seu login <a href=login>aqui</a></h3>
 |]
 
 getAutorR :: Handler Html
@@ -111,6 +112,7 @@ getFilmeR pid = do
              defaultLayout [whamlet|
                  <h1> Nome: #{filmeNome filme}
                      <h2>Diretor: #{filmeDiretor filme}
+                     <h2>Sinopse: #{filmeSinopse filme}
              |]
 
 getListarR :: Handler Html
