@@ -24,9 +24,12 @@ formFilme :: Form Filme
 formFilme = renderDivs $ Filme <$>
              areq textField "Nome" Nothing <*>
              areq textField "Diretor" Nothing <*>
-             areq (selectField genero) "Genero" Nothing
+             areq (selectField genero) "Genero" Nothing <*>
              areq textField FieldSettings{fsId=Just "hident22",
-                            fsLabel 
+                            fsLabel="Sinopse",
+                            fsTooltip=Nothing,
+                            fsName= Nothing,
+                            fsAttrs=[("maxlength","2")]} Nothing
 
 
 formPessoa :: Form Pessoa
