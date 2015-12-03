@@ -218,11 +218,13 @@ getListarFavoritoR = do
                                    \FROM favorito INNER JOIN pessoa \
                                    \ON favorito.pessoa_id=pessoa.id \
                                    \INNER JOIN filme \
-                                   \ON favorito.filme_id=filme.id" [])::Handler [(Entity Favorito, Entity Pessoa, Entity Filme)]
+                                   \ON favorito.filme_id=filme.id " [])::Handler [(Entity Favorito, Entity Pessoa, Entity Filme)]
                  defaultLayout [whamlet|
                       <h1> Lista de seus filmes Favoritos
                       $forall (Entity oq favorito, Entity _ np, Entity _ fn) <- favoritos
-                          <p> Filmes favoritos #{fromSqlKey oq}: #{pessoaUsuario np} #{filmeNome fn} {favoritoNota}
+                          <p> Filmes favoritos #{fromSqlKey oq}: 
+                            <p> Usuario: #{pessoaUsuario np} 
+                               <p> Filme: #{filmeNome fn}
 
                     |]
 
