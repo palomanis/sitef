@@ -34,6 +34,13 @@ Filme
    sinopse Text
    deriving Show
 
+Favorito
+   filmeId FilmeId
+   pessoaId PessoaId
+   nota Int
+   processado Bool
+   UniquePessFilm pessoaId filmeId
+
 |]
 
 mkYesodData "Sitio" pRoutes

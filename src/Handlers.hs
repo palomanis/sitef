@@ -37,9 +37,24 @@ formPessoa = renderDivs $ Pessoa <$>
              areq textField "Usuario" Nothing <*>
              areq passwordField "Senha" Nothing 
 
+formFavorito :: Form Favorito
+formFavorito = renderDivs $ Favorito <$>
+             areq (selectField filme) "Nome" Nothing <*>
+             areq (selectField pessoa) "Usuario" Nothing <*>
+             areq intField "Nota" Nothing <*>
+             lift (liftIO $ return False)
+
 genero = do
         entities <- runDB $ selectList [] [Asc GeneroGenero]
         optionsPairs $ Prelude.map (\en -> (generoGenero $ entityVal en, entityKey en)) entities
+
+filme = do
+       entidades <- runDB $ selectList [] [Asc FilmeNome] 
+       optionsPairs $ fmap (\ent -> (filmeNome $ entityVal ent, entityKey ent)) entidades
+
+pessoa = do
+       entidades <- runDB $ selectList [] [Asc PessoaUsuario] 
+       optionsPairs $ fmap (\ent -> (pessoaUsuario $ entityVal ent, entityKey ent)) entidades
 
 widgetForm :: Route Sitio -> Enctype -> Widget -> Text -> Text -> Widget
 widgetForm x enctype widget y val = do
@@ -50,7 +65,7 @@ widgetForm x enctype widget y val = do
 getHomeR :: Handler Html
 getHomeR = defaultLayout [whamlet|
 <body bgcolor="black">
-      <img src=@{StaticR cinemaa_jpg} align="right">
+      <img src=@{StaticR charliechaplin_jpg}>
      <h1 align="center"> <FONT color="white"> Bem Vindo ao site Em cena</h1>
          <h2 align="center"> <FONT color="white"> Seu site de informações sobre cinema</h2>
                                    <h3> <FONT color="blue"> Faça seu cadastro <a href=cadastro>aqui</a></h3>
@@ -72,7 +87,8 @@ getWelcomeR = do
      usr <- lookupSession "_ID"
      defaultLayout [whamlet|
         $maybe m <- usr
-            <h1> Welcome #{m}
+                    <h1> Welcome #{m}</h1>
+             <h2>Deseja ver seus filmes favoritos? clique <a href=@{ListarFavoritoR}>aqui</a>
      |]
 
 getListarfR :: Handler Html
@@ -113,6 +129,7 @@ getFilmeR pid = do
                  <h1> Nome: #{filmeNome filme}
                      <h2>Diretor: #{filmeDiretor filme}
                      <h2>Sinopse: #{filmeSinopse filme}
+                     <h1> <FONT color="blue"> Deseja marcar como "favorito"? clique <a href=@{FavoritoR}>aqui</a>
              |]
 
 getListarR :: Handler Html
@@ -174,7 +191,7 @@ postLoginR = do
             case usuario of
                 Just (Entity uid usr) -> do
                     setSession "_ID" (pessoaUsuario usr)
-                    redirect ListarfR
+                    redirect WelcomeR
                 Nothing -> do
                     setMessage $ [shamlet| Invalid user |]
                     redirect LoginR
@@ -182,6 +199,32 @@ postLoginR = do
 
 getAdminR :: Handler Html
 getAdminR = defaultLayout [whamlet| <h1> Bem-vindo ADMIN!! |]
+
+getFavoritoR :: Handler Html
+getFavoritoR = do
+           (widget, enctype) <- generateFormPost formFavorito
+           defaultLayout $ widgetForm FavoritoR enctype widget "Favorito" "Favoritar"
+
+postFavoritoR :: Handler Html
+postFavoritoR = do
+            ((result,_),_) <- runFormPost formFavorito
+            case result of
+                FormSuccess x -> (runDB $ insert x) >> defaultLayout [whamlet|<h1> Ordem inserida|]
+                _ -> redirect FavoritoR
+
+getListarFavoritoR :: Handler Html
+getListarFavoritoR = do
+                 favoritos <- runDB $ (rawSql "SELECT ??, ??, ?? \
+                                   \FROM favorito INNER JOIN pessoa \
+                                   \ON favorito.pessoa_id=pessoa.id \
+                                   \INNER JOIN filme \
+                                   \ON favorito.filme_id=filme.id" [])::Handler [(Entity Favorito, Entity Pessoa, Entity Filme)]
+                 defaultLayout [whamlet|
+                      <h1> Lista de seus filmes Favoritos
+                      $forall (Entity oq favorito, Entity _ np, Entity _ fn) <- favoritos
+                          <p> Filmes favoritos #{fromSqlKey oq}: #{pessoaUsuario np} #{filmeNome fn} {favoritoNota}
+
+                    |]
 
 connStr = "dbname=daabv190v9phsh host=ec2-54-204-13-220.compute-1.amazonaws.com user=uyktppkeqynryq password=7UILwm-sO9N5Vidyu2halCInzQ port=5432"
 

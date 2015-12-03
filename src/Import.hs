@@ -14,8 +14,10 @@ pRoutes = [parseRoutes|
    /autor AutorR GET
    /static StaticR Static getStatic
    /cadastrofilme CadastrofR GET POST
+   /listarfavorito ListarFavoritoR GET
    /genero GeneroR GET POST
    /admin AdminR GET
+   /favorito FavoritoR GET POST
    /login LoginR GET POST
    /welcome WelcomeR GET
 |]
