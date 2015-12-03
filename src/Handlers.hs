@@ -65,7 +65,7 @@ widgetForm x enctype widget y val = do
 getHomeR :: Handler Html
 getHomeR = defaultLayout [whamlet|
 <body bgcolor="black">
-      <img src=@{StaticR charliechaplin_jpg}>
+      <img src=@{StaticR ccharliechaplin_jpg}>
      <h1 align="center"> <FONT color="white"> Bem Vindo ao site Em cena</h1>
          <h2 align="center"> <FONT color="white"> Seu site de informações sobre cinema</h2>
                                    <h3> <FONT color="blue"> Faça seu cadastro <a href=cadastro>aqui</a></h3>
