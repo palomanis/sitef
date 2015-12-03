@@ -60,7 +60,7 @@ widgetForm :: Route Sitio -> Enctype -> Widget -> Text -> Text -> Widget
 widgetForm x enctype widget y val = do
      msg <- getMessage
      $(whamletFile "form.hamlet")
-     toWidget $(luciusFile "teste.lucius")
+     toWidget $(luciusFile "cs.lucius")
 
 getHomeR :: Handler Html
 getHomeR = defaultLayout [whamlet|
